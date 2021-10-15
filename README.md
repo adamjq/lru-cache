@@ -1,6 +1,6 @@
-# lru-cache
+# Least Recently Used (LRU) Cache
 
-Thread-safe Golang implementation of a Least Recently Used cache.
+Thread-safe Go implementation of a [Least Recently Used cache](https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)).
 
 ## Usage
 
