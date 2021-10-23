@@ -44,8 +44,6 @@ func (lc *LRUCache) Get(key string) *string {
 
 	n, exists := lc.cache[key]
 	if exists {
-
-		// move to front of doubly linked list
 		lc.remove(n)
 		lc.insert(n)
 		return n.value
@@ -70,11 +68,8 @@ func (lc *LRUCache) Put(key string, value string) {
 	lc.cache[key] = &newNode
 	lc.insert(&newNode)
 
-	// evict oldest key if cache is over capacity
 	if len(lc.cache) > lc.maxCapacity {
-		lruNode := lc.tail.prev
-		delete(lc.cache, *lruNode.key)
-		lc.remove(lruNode)
+		lc.evict()
 	}
 
 	lc.mu.Unlock()
@@ -91,9 +86,16 @@ func (lc *LRUCache) insert(n *node) {
 	n.next = firstNode
 }
 
-// remove deletes a node from a doubly linked list
+// remove unlinks a node from a doubly linked list
 func (lc *LRUCache) remove(n *node) {
 	prevNode, nextNode := n.prev, n.next
 	prevNode.next = nextNode
 	nextNode.prev = prevNode
+}
+
+// evict removes the least frequently used key from the cache
+func (lc *LRUCache) evict() {
+	lruNode := lc.tail.prev
+	delete(lc.cache, *lruNode.key)
+	lc.remove(lruNode)
 }

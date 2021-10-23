@@ -2,8 +2,8 @@ package lru
 
 import (
 	"fmt"
+	"sync"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/require"
 )
@@ -114,9 +114,18 @@ func TestLRUCache_parallelPut(t *testing.T) {
 	cache, err := New(cacheSize)
 	assert.NoError(err)
 
+	var wg sync.WaitGroup
+
 	for i := 0; i < cacheSize; i++ {
-		go cache.Put(fmt.Sprintf("key-%v", i), fmt.Sprintf("value-%v", i))
+		wg.Add(1)
+		i := i
+
+		go func() {
+			defer wg.Done()
+			cache.Put(fmt.Sprintf("key-%v", i), fmt.Sprintf("value-%v", i))
+		}()
 	}
-	time.Sleep(time.Second)
+
+	wg.Wait()
 	assert.Equal(cacheSize, len(cache.cache))
 }
