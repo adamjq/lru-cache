@@ -107,7 +107,7 @@ func TestLRUCache_sequentialPutExceedsCacheSize(t *testing.T) {
 	assert.Equal(cacheSize, len(cache.cache))
 }
 
-func TestLRUCache_parallelPut(t *testing.T) {
+func TestLRUCache_concurrentPut(t *testing.T) {
 	assert := require.New(t)
 
 	cacheSize := 500
