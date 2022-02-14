@@ -53,11 +53,11 @@ func main() {
 
   userId := "22bc77a3-1456-470f-bdb0-0c893b8778a8"
 
-	key := userId
-	value := user{
-		userID: userId,
-		name: 	"Adam",
-	}
+  key := userId
+  value := user{
+    userID: userId,
+    name: 	"Adam",
+  }
 
   cache.Put(key, value)
   v := cache.Get(key) // user
