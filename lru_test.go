@@ -92,7 +92,7 @@ func TestLRUCache_simpleStringKeyStructValue(t *testing.T) {
 
 	type user struct {
 		userID string
-		name string
+		name   string
 	}
 
 	cache, err := New[string, user](2)
@@ -103,7 +103,7 @@ func TestLRUCache_simpleStringKeyStructValue(t *testing.T) {
 	key := mockUserId
 	value := user{
 		userID: mockUserId,
-		name: 	"Adam",
+		name:   "Adam",
 	}
 
 	v := cache.Get(key)
