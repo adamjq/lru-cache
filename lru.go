@@ -5,40 +5,40 @@ import (
 	"sync"
 )
 
-type LRUCache[K comparable] struct {
+type LRUCache[K comparable, V any] struct {
 	maxCapacity int
-	cache       map[K]*node[K]
-	head        *node[K]
-	tail        *node[K]
+	cache       map[K]*node[K, V]
+	head        *node[K, V]
+	tail        *node[K, V]
 	mu          sync.RWMutex
 }
 
-type node[K comparable] struct {
+type node[K comparable, V any] struct {
 	key   *K
-	value *string
-	next  *node[K]
-	prev  *node[K]
+	value *V
+	next  *node[K, V]
+	prev  *node[K, V]
 }
 
-func New[K comparable](capacity int) (*LRUCache[K], error) {
+func New[K comparable, V any](capacity int) (*LRUCache[K, V], error) {
 	if capacity < 1 {
 		return nil, errors.New("capacity must be greater than 0")
 	}
 
-	head, tail := node[K]{}, node[K]{}
+	head, tail := node[K, V]{}, node[K, V]{}
 	head.next = &tail
 	tail.prev = &head
 
-	return &LRUCache[K]{
+	return &LRUCache[K, V]{
 		maxCapacity: capacity,
-		cache:       make(map[K]*node[K]),
+		cache:       make(map[K]*node[K, V]),
 		head:        &head,
 		tail:        &tail,
 	}, nil
 }
 
 // Get returns a value from the cache
-func (lc *LRUCache[K]) Get(key K) *string {
+func (lc *LRUCache[K, V]) Get(key K) *V {
 	lc.mu.Lock()
 	defer lc.mu.Unlock()
 
@@ -53,7 +53,7 @@ func (lc *LRUCache[K]) Get(key K) *string {
 }
 
 // Put stores a value in the cache and evicts the oldest value if the cache is at maximum capacity
-func (lc *LRUCache[K]) Put(key K, value string) {
+func (lc *LRUCache[K, V]) Put(key K, value V) {
 	lc.mu.Lock()
 
 	n, exists := lc.cache[key]
@@ -61,7 +61,7 @@ func (lc *LRUCache[K]) Put(key K, value string) {
 		lc.remove(n)
 	}
 
-	newNode := node[K]{
+	newNode := node[K, V]{
 		key:   &key,
 		value: &value,
 	}
@@ -76,7 +76,7 @@ func (lc *LRUCache[K]) Put(key K, value string) {
 }
 
 // insert adds a node to the head of the doubly linked list
-func (lc *LRUCache[K]) insert(n *node[K]) {
+func (lc *LRUCache[K, V]) insert(n *node[K, V]) {
 	headNode, firstNode := lc.head, lc.head.next
 
 	headNode.next = n
@@ -87,14 +87,14 @@ func (lc *LRUCache[K]) insert(n *node[K]) {
 }
 
 // remove unlinks a node from a doubly linked list
-func (lc *LRUCache[K]) remove(n *node[K]) {
+func (lc *LRUCache[K, V]) remove(n *node[K, V]) {
 	prevNode, nextNode := n.prev, n.next
 	prevNode.next = nextNode
 	nextNode.prev = prevNode
 }
 
 // evict removes the least frequently used key from the cache
-func (lc *LRUCache[K]) evict() {
+func (lc *LRUCache[K, V]) evict() {
 	lruNode := lc.tail.prev
 	delete(lc.cache, *lruNode.key)
 	lc.remove(lruNode)
