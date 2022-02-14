@@ -103,7 +103,7 @@ func TestLRUCache_simpleStringKeyStructValue(t *testing.T) {
 	key := mockUserId
 	value := user{
 		userID: mockUserId,
-		name: "Adam",
+		name: 	"Adam",
 	}
 
 	v := cache.Get(key)
