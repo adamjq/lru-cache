@@ -56,7 +56,7 @@ func main() {
   key := userId
   value := user{
     userID: userId,
-    name: 	"Adam",
+    name:   "Adam",
   }
 
   cache.Put(key, value)
