@@ -1,11 +1,10 @@
 # Least Recently Used (LRU) Cache
 
-Thread-safe Go implementation of a [Least Recently Used cache](https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)).
+Thread-safe Go implementation of a [Least Recently Used cache](https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)) with O(1) insertions and O(1) lookups.
 
 ## Usage
 
 The library uses generic Key and Values [recently introduced in Go 1.18](https://tip.golang.org/doc/go1.18).
-
 
 ### String example
 
